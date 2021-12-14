@@ -16,8 +16,9 @@ void* ROSWrapper::internalThreadRoutine()
 
     _segment_id = shmget(100, 0, 0);
     _shared_memory = (DC*)shmat(_segment_id, NULL, 0);
-    _shared_memory->_x = Eigen::Vector3d::Ones(3);
-    cout << "Contents of shared memory : " << _shared_memory->_x.transpose() << '\n';
+    // _shared_memory->initialize();
+    // _shared_memory->_x = Eigen::VectorXd::Ones(6);
+    // cout << "ROS Contents of shared memory : " << _shared_memory->_x.transpose() << '\n';
     shmdt(_shared_memory);
     // shmctl(segment_id_, IPC_RMID, NULL);
     while(ros::ok())

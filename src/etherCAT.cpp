@@ -16,8 +16,9 @@ void EtherCAT::createSharedMemory()
 
     _segment_id = shmget(100, 0, 0);
     _shared_memory = (DC*)shmat(_segment_id, NULL, 0);
-    _shared_memory->_x = Eigen::Vector3d::Ones(3) * 2.0;
-    cout << "EtherCAT Contents of shared memory : " << _shared_memory->_x.transpose() << '\n';
+    // _shared_memory->initialize();
+    // _shared_memory->_x = Eigen::VectorXd::Ones(6) * 2.0;
+    // cout << "EtherCAT Contents of shared memory : " << _shared_memory->_x.transpose() << '\n';
     shmdt(_shared_memory);
 }
 

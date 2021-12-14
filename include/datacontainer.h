@@ -11,12 +11,17 @@ using namespace Eigen;
 class DC
 {
 public:
-    DC() {initialize();}
-    ~DC();
-    Vector3d _x;
+    DC() {}
+    ~DC() {}
+    VectorXd _x;
+    VectorXd _q;
+    inline void initialize();
 private:
-    void initialize()
-    {
-        // _x.setZero(6);
-    }
 };
+
+void DC::initialize()
+{
+    _x.setZero(6);
+    cout << _x.transpose() << '\n';
+    _q.setZero(9);
+}
