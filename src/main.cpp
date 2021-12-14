@@ -10,6 +10,8 @@ int main(int argc, char* argv[])
 
     ROSWrapper _ros_wrapper(nh_);
     Shm _shm;
+    EtherCAT ECAT;
+    
     signal(SIGINT, signal_handler);
     pthread_create(&pth_ros_, NULL, &ROSWrapper::externalThreadRoutine, &_ros_wrapper);
     pthread_create(&pth_shm_, NULL, &Shm::externalThreadRoutine, &_shm);

@@ -12,8 +12,14 @@ Shm::~Shm()
 
 void Shm::createSharedMemory()
 {
-    _segment_id = shmget(_key, _size, IPC_CREAT | S_IRUSR | S_IWUSR);
-    _shared_memory = (char *)shmat(_segment_id, NULL, 0);
+    if(_segment_id = shmget(_key, _size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR) == -1)
+    {
+        int err = errno;
+        fprintf (stderr, "[FALUT] CANNOT CREATE SHARED MEMORY: %s\n", strerror (errno));
+        // _segment_id = shmget(_key, _size, IPC_CREAT | S_IRUSR | S_IWUSR);
+        exit(0);
+    }
+    _shared_memory = (DC *)shmat(_segment_id, NULL, 0);
     cout << "Contents of shared memory : " << _shared_memory << '\n';
     shmdt(_shared_memory);
     return;
@@ -38,7 +44,7 @@ void* Shm::internalThreadRoutine()
 void Shm::initialize()
 {
     _segment_id = 0;
-    _size = PAGE_SIZE;
+    _size = sizeof(DC); //PAGE_SIZE;
     _key = 100; // Arbitrary number
     _shared_memory = NULL;
 }

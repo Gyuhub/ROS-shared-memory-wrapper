@@ -12,15 +12,13 @@ ROSWrapper::~ROSWrapper()
 
 void* ROSWrapper::internalThreadRoutine()
 {
-    int segment_id_;
-    char *shared_memory;
-    int size = PAGE_SIZE;
+    _size = sizeof(DC);
 
-    segment_id_ = shmget(100, size, 0);
-    shared_memory = (char*)shmat(segment_id_, NULL, 0);
-    shared_memory = "Hello\n";
-    cout << "Contents of shared memory : " << shared_memory << '\n';
-    shmdt(shared_memory);
+    _segment_id = shmget(100, 0, 0);
+    _shared_memory = (DC*)shmat(_segment_id, NULL, 0);
+    _shared_memory->_x = Eigen::Vector3d::Ones(3);
+    cout << "Contents of shared memory : " << _shared_memory->_x.transpose() << '\n';
+    shmdt(_shared_memory);
     // shmctl(segment_id_, IPC_RMID, NULL);
     while(ros::ok())
     {

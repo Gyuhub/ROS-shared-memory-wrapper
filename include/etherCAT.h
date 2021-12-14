@@ -3,6 +3,7 @@
 #include "sys/shm.h"
 #include "sys/stat.h"
 #include "sys/user.h"
+#include "datacontainer.h"
 
 class EtherCAT
 {
@@ -15,6 +16,6 @@ private:
     int _segment_id;
     int _size;
     int _key;
-    char* _shared_memory;
+    DC* _shared_memory;
     void initialize();
 };
