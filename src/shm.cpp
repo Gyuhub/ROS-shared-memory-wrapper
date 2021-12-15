@@ -7,6 +7,7 @@ Shm::Shm(DC* dc) : _shared_memory(dc)
 
 Shm::~Shm()
 {
+    pthread_mutexattr_destroy(&_mtx_attr);
     pthread_mutex_destroy(&_mtx);
 }
 
@@ -41,5 +42,7 @@ void Shm::initialize()
     _segment_id = 0;
     _size = sizeof(DC); //PAGE_SIZE;
     _key = 100; // Arbitrary number
-    pthread_mutex_init(&_mtx,NULL);
+    pthread_mutexattr_init(&_mtx_attr);
+    pthread_mutexattr_setpshared(&_mtx_attr, PTHREAD_PROCESS_SHARED);
+    pthread_mutex_init(&_mtx,&_mtx_attr);
 }

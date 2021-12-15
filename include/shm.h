@@ -19,6 +19,8 @@ public:
     DC* _shared_memory;
     pthread_mutex_t _mtx;
 private:
+    pthread_mutexattr_t _mtx_attr;
+
     int _segment_id;
     int _size;
     int _key;
