@@ -8,9 +8,13 @@ project(shm_ros)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  message_generation
+  message_runtime
+  geometry_msgs
   roscpp
   rospy
   std_msgs
+  tf
 )
 
 set(SRC_FILES
@@ -60,11 +64,10 @@ set(SRC_FILES
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  srvwrapper.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -74,10 +77,11 @@ set(SRC_FILES
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -111,7 +115,7 @@ set(SRC_FILES
 catkin_package(
    INCLUDE_DIRS include
 #  LIBRARIES shm_ros
-#  CATKIN_DEPENDS nodelet roscpp rospy std_msgs
+   CATKIN_DEPENDS roscpp rospy std_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 
@@ -150,7 +154,7 @@ add_executable(shm_manager src/shm_manager.cpp src/shm.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(shm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(shm_node
