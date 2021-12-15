@@ -1,21 +1,14 @@
 #pragma once
-#include <iostream>
-#include "sys/shm.h"
-#include "sys/stat.h"
-#include "sys/user.h"
-#include "datacontainer.h"
+#include "shm.h"
 
 class EtherCAT
 {
 public:
-    EtherCAT();
+    EtherCAT(Shm* shm);
     ~EtherCAT();
-    void createSharedMemory();
-    void removeSharedMemory();
+    void* internalThreadRoutine();
+    static void* externalThreadRoutine(void* arg) {return ((EtherCAT*)arg)->internalThreadRoutine();}
 private:
-    int _segment_id;
-    int _size;
-    int _key;
-    DC* _shared_memory;
+    Shm &_shm;
     void initialize();
 };

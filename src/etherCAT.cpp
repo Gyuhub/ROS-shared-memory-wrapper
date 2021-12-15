@@ -1,6 +1,6 @@
 #include "etherCAT.h"
 
-EtherCAT::EtherCAT()
+EtherCAT::EtherCAT(Shm* shm) : _shm(*shm)
 {
     initialize();
 }
@@ -10,24 +10,35 @@ EtherCAT::~EtherCAT()
 
 }
 
-void EtherCAT::createSharedMemory()
+void* EtherCAT::internalThreadRoutine()
 {
-    _size = sizeof(DC);
-
-    _segment_id = shmget(100, 0, 0);
-    _shared_memory = (DC*)shmat(_segment_id, NULL, 0);
-    // _shared_memory->initialize();
-    // _shared_memory->_x = Eigen::VectorXd::Ones(6) * 2.0;
-    // cout << "EtherCAT Contents of shared memory : " << _shared_memory->_x.transpose() << '\n';
-    shmdt(_shared_memory);
-}
-
-void EtherCAT::removeSharedMemory()
-{
-    shmctl(_segment_id, IPC_RMID, NULL);
+    double x = 1.0;
+    double y = -1.0;
+    double z = 0.0;
+    bool flag = false;
+    while(1)
+    {
+        if (flag == false)
+        {
+            x -= 0.001;
+        }
+        else
+        {
+            x += 0.001;
+        }
+        y = std::sqrt((1 - std::pow(x, 2)));
+        pthread_mutex_lock(&_shm._mtx);
+        _shm._shared_memory->_x(0) = x;
+        _shm._shared_memory->_x(1) = y;
+        _shm._shared_memory->_x(2) = z;
+        pthread_mutex_unlock(&_shm._mtx);
+        if (x <= -1) flag = true;
+        else if (x >= 1) flag = false;
+        std::cout << "x: [" << x << "]\ty: [" << y << "]\tz: [" << z << "]\n";
+    }
+    return NULL;
 }
 
 void EtherCAT::initialize()
 {
-    createSharedMemory();
 }

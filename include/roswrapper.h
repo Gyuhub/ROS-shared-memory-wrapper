@@ -1,12 +1,8 @@
 #pragma once
 #include <ros/ros.h>
-#include <std_msgs/String.h>
-#include <iostream>
+#include <std_msgs/Float32MultiArray.h>
 #include <string.h>
-#include "sys/shm.h"
-#include "sys/stat.h"
-#include "sys/user.h"
-#include "datacontainer.h"
+#include "shm.h"
 
 using namespace std;
 using namespace ros;
@@ -14,7 +10,7 @@ using namespace ros;
 class ROSWrapper
 {
 public:
-    ROSWrapper(const NodeHandle& nh);
+    ROSWrapper(const NodeHandle& nh, Shm* shm);
     ~ROSWrapper();
     Publisher _pub;
     Subscriber _sub;
@@ -23,11 +19,8 @@ public:
     void *internalThreadRoutine();
     static void* externalThreadRoutine(void* arg) {return ((ROSWrapper *)arg)->internalThreadRoutine();};
 private:
-    int _segment_id;
-    int _size;
-    int _key;
-    DC* _shared_memory;
+    Shm& _shm;
     
     void initialize();
-    void SubscribeCallBack(const std_msgs::StringConstPtr msg);
+    // void SubscribeCallBack(const std_msgs msg);
 };

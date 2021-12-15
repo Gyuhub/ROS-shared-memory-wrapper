@@ -11,7 +11,7 @@ using namespace Eigen;
 class DC
 {
 public:
-    DC() {}
+    DC() {initialize();}
     ~DC() {}
     VectorXd _x;
     VectorXd _q;
@@ -22,6 +22,5 @@ private:
 void DC::initialize()
 {
     _x.setZero(6);
-    cout << _x.transpose() << '\n';
     _q.setZero(9);
 }

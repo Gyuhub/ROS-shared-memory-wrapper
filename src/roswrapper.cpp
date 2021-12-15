@@ -1,6 +1,6 @@
 #include "roswrapper.h"
 
-ROSWrapper::ROSWrapper(const NodeHandle& nh) : _nh(nh)
+ROSWrapper::ROSWrapper(const NodeHandle& nh, Shm* shm) : _nh(nh) , _shm(*shm)
 {
     initialize();
 }
@@ -12,25 +12,25 @@ ROSWrapper::~ROSWrapper()
 
 void* ROSWrapper::internalThreadRoutine()
 {
-    _size = sizeof(DC);
-
-    _segment_id = shmget(100, 0, 0);
-    _shared_memory = (DC*)shmat(_segment_id, NULL, 0);
-    // _shared_memory->initialize();
-    // _shared_memory->_x = Eigen::VectorXd::Ones(6);
-    // cout << "ROS Contents of shared memory : " << _shared_memory->_x.transpose() << '\n';
-    shmdt(_shared_memory);
-    // shmctl(segment_id_, IPC_RMID, NULL);
+    _pub = _nh.advertise<std_msgs::Float32MultiArray>("/topic", 1);
+    std_msgs::Float32MultiArray msg_;
     while(ros::ok())
     {
+        pthread_mutex_lock(&_shm._mtx);
+        msg_.data.push_back(_shm._shared_memory->_x(0));
+        msg_.data.push_back(_shm._shared_memory->_x(1));
+        msg_.data.push_back(_shm._shared_memory->_x(2));
+        _pub.publish(msg_);
+        msg_.data.clear();
+        pthread_mutex_unlock(&_shm._mtx);
     }
     ros::spin();
     return NULL;
 }
 
-void ROSWrapper::SubscribeCallBack(const std_msgs::StringConstPtr msg)
-{
-}
+// void ROSWrapper::SubscribeCallBack(const std_msgs msg)
+// {
+// }
 
 void ROSWrapper::initialize()
 {

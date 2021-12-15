@@ -11,16 +11,16 @@ using namespace std;
 class Shm
 {
 public:
-    Shm();
+    Shm(DC* dc);
     ~Shm();
     void createSharedMemory();
     void removeSharedMemory();
-    void* internalThreadRoutine();
-    static void* externalThreadRoutine(void* arg) {return ((Shm*)arg)->internalThreadRoutine();}
+
+    DC* _shared_memory;
+    pthread_mutex_t _mtx;
 private:
     int _segment_id;
     int _size;
     int _key;
-    DC* _shared_memory;
     void initialize();
 };
